@@ -54,7 +54,7 @@ def create_place(city_id):
     """ create new place to a specific city """
     if city_id is None:
         abort(404)
-    city = storage.get(City, City_id)
+    city = storage.get(City, city_id)
     if city is None:
         abort(404)
     body = request.get_json()
