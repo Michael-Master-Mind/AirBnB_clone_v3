@@ -59,7 +59,7 @@ def create_review(place_id):
     if place is None:
         abort(404)
     body = request.get_json()
-    if body is None or type(body) is not dict::
+    if body is None or type(body) is not dict:
         abort(400, 'Not a JSON')
     if 'text' not in body.keys():
         abort(400, 'Missing text')

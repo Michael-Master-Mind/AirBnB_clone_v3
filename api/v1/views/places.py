@@ -59,7 +59,7 @@ def create_place(city_id):
     if city is None:
         abort(404)
     body = request.get_json()
-    if body is None  or type(body) is not dict::
+    if body is None  or type(body) is not dict:
         abort(400, 'Not a JSON')
     if 'name' not in body.keys():
         abort(400, 'Missing name')
