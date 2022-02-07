@@ -64,7 +64,7 @@ def create_place(city_id):
         abort(400, 'Missing name')
     if 'user_id' not in body.keys():
         abort(400, 'Missing user_id')
-    body['city_id'] = city.id
+    body['city_id'] = city_id
     obj = Place(**body)
     obj.save()
     return make_response(jsonify(obj.to_dict()), 201)
