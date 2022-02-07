@@ -21,7 +21,7 @@ def exit(exception):
 def error404(e):
     """ instance of app to handle 404 errors """
     response = {"error": "Not found"}
-    return make_response(jsonify(response))
+    return make_response(jsonify(response), 404)
 
 if __name__ == '__main__':
     host = getenv("HBNB_API_HOST")
