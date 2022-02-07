@@ -65,15 +65,15 @@ def create_place(city_id):
     if 'user_id' not in body.keys():
         abort(400, 'Missing user_id')
     body['city_id'] = city.id
-    obj = City(**body)
+    obj = Place(**body)
     obj.save()
     return make_response(jsonify(obj.to_dict()), 201)
 
 
 @app_views.route('/places/<place_id>', methods=['PUT'], strict_slashes=False)
-def update_place(city_id=None):
+def update_place(place_id=None):
     """ update an existing place """
-    response = storage.get(City, place_id)
+    response = storage.get(Place, place_id)
     if place_id is None or response is None:
         abort(404)
     try:
