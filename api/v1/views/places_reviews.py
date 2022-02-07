@@ -8,6 +8,7 @@ from flask import jsonify, make_response, request, abort
 from models import storage
 from models.review import Review
 from models.place import Place
+from models.user import User
 
 
 @app_views.route('/places/<place_id>/reviews', strict_slashes=False)
@@ -64,6 +65,8 @@ def create_review(place_id):
         abort(400, 'Missing text')
     if 'user_id' not in body.keys():
         abort(400, 'Missing user_id')
+    if storage.get(User, body['user_id']) is None:
+        abort(400)
     body['place_id'] = place_id
     obj = Review(**body)
     obj.save()
