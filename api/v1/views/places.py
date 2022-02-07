@@ -8,6 +8,7 @@ from flask import jsonify, make_response, request, abort
 from models import storage
 from models.place import Place
 from models.city import City
+from models.user import User
 
 
 @app_views.route('/cities/<city_id>/places', strict_slashes=False)
@@ -58,7 +59,7 @@ def create_place(city_id):
     if city is None:
         abort(404)
     body = request.get_json()
-    if body is None:
+    if body is None  or type(body) is not dict::
         abort(400, 'Not a JSON')
     if 'name' not in body.keys():
         abort(400, 'Missing name')
