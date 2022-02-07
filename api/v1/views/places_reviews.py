@@ -7,20 +7,24 @@ from api.v1.views import app_views
 from flask import jsonify, make_response, request, abort
 from models import storage
 from models.review import Review
+from models.place import place
 
 
-@app_views.route('/reviews', strict_slashes=False)
-def all_reviews():
+@app_views.route('/places/<place_id>/reviews', strict_slashes=False)
+def all_reviews(place_id):
     """ display all reviews """
+    place = storage.get(Place, place_id)
+    if place is None:
+        abort(404)
     response = []
-    reviews = storage.all(Review)
-    for review in reviews.values():
+    reviews = place.reviews
+    for review in reviews:
         response.append(review.to_dict())
     return jsonify(response)
 
 
 @app_views.route('/reviews/<review_id>', strict_slashes=False)
-def review_by_id(review_id):
+def review_by_id(place_id=None):
     """ display review by id """
     response = storage.get(Review, review_id)
     if response is None:
@@ -44,20 +48,26 @@ def del_review(review_id=None):
             abort(404)
 
 
-@app_views.route('/reviews', methods=['POST'], strict_slashes=False)
-def create_review():
-    """ creates a new review """
-    try:
-        new = request.get_json()
-    except Exception:
-        pass
-    if new is None or type(new) is not dict:
+@app_views.route('/places/<place_id>/reviews', methods=['POST'],
+                 strict_slashes=False)
+def create_review(place_id):
+    """ create new review to a specific place """
+    if place_id is None:
+        abort(404)
+    place = storage.get(Place, place_id)
+    if place is None:
+        abort(404)
+    body = request.get_json()
+    if body is None:
         abort(400, 'Not a JSON')
-    if 'name' not in new.keys():
-        abort(400, 'Missing Name')
-    response = Review(**new)
-    response.save()
-    return make_response(jsonify(response.to_dict()), 201)
+    if 'text' not in body.keys():
+        abort(400, 'Missing text')
+    if 'user_id' not in body.keys():
+        abort(400, 'Missing user_id')
+    body['place_id'] = place_id
+    obj = Review(**body)
+    obj.save()
+    return make_response(jsonify(obj.to_dict()), 201)
 
 
 @app_views.route('/reviews/<review_id>', methods=['PUT'], strict_slashes=False)
@@ -73,7 +83,8 @@ def update_review(review_id=None):
     if new is None or type(new) is not dict:
         abort(400, 'Not a JSON')
     for key in new.keys():
-        if key != 'id' and key != 'created_at' and key != 'updated_at':
+        if key != 'id' and key != 'created_at' and key != 'place_id' and\
+           key != 'user_id' and key != 'updated_at':
             setattr(response, key, new[key])
     response.save()
     return make_response(jsonify(response.to_dict()), 200)
