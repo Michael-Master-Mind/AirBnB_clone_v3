@@ -53,8 +53,10 @@ def create_user():
         pass
     if new is None or type(new) is not dict:
         abort(400, 'Not a JSON')
-    if 'name' not in new.keys():
-        abort(400, 'Missing Name')
+    if 'email' not in new.keys():
+        abort(400, 'Missing email')
+    if 'password' not in new.keys():
+        abort(400, 'Missing password')
     response = User(**new)
     response.save()
     return make_response(jsonify(response.to_dict()), 201)
