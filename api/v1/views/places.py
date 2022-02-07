@@ -24,7 +24,7 @@ def all_places(city_id):
 
 
 @app_views.route('/places/<place_id>', strict_slashes=False)
-def place_by_id(city_id=None):
+def place_by_id(place_id=None):
     """ display place by id """
     response = storage.get(Place, place_id)
     if response is None:
