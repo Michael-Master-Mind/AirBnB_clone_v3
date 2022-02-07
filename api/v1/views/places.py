@@ -7,20 +7,24 @@ from api.v1.views import app_views
 from flask import jsonify, make_response, request, abort
 from models import storage
 from models.place import Place
+from models.city import City
 
 
-@app_views.route('/places', strict_slashes=False)
-def all_places():
+@app_views.route('/cities/<city_id>/places', strict_slashes=False)
+def all_places(city_id):
     """ display all places """
+    city = storage.get(City, city_id)
+    if city is None:
+        abort(404)
     response = []
-    places = storage.all(Place)
-    for place in places.values():
+    places = city.places
+    for place in places:
         response.append(place.to_dict())
     return jsonify(response)
 
 
 @app_views.route('/places/<place_id>', strict_slashes=False)
-def place_by_id(place_id):
+def place_by_id(city_id=None):
     """ display place by id """
     response = storage.get(Place, place_id)
     if response is None:
@@ -44,26 +48,32 @@ def del_place(place_id=None):
             abort(404)
 
 
-@app_views.route('/places', methods=['POST'], strict_slashes=False)
-def create_place():
-    """ creates a new place """
-    try:
-        new = request.get_json()
-    except Exception:
-        pass
-    if new is None or type(new) is not dict:
+@app_views.route('/cities/<city_id>/places', methods=['POST'],
+                 strict_slashes=False)
+def create_place(city_id):
+    """ create new place to a specific city """
+    if city_id is None:
+        abort(404)
+    city = storage.get(City, City_id)
+    if city is None:
+        abort(404)
+    body = request.get_json()
+    if body is None:
         abort(400, 'Not a JSON')
-    if 'name' not in new.keys():
-        abort(400, 'Missing Name')
-    response = Place(**new)
-    response.save()
-    return make_response(jsonify(response.to_dict()), 201)
+    if 'name' not in body.keys():
+        abort(400, 'Missing name')
+    if 'user_id' not in body.keys():
+        abort(400, 'Missing user_id')
+    body['city_id'] = city.id
+    obj = City(**body)
+    obj.save()
+    return make_response(jsonify(obj.to_dict()), 201)
 
 
 @app_views.route('/places/<place_id>', methods=['PUT'], strict_slashes=False)
-def update_place(place_id=None):
+def update_place(city_id=None):
     """ update an existing place """
-    response = storage.get(Place, place_id)
+    response = storage.get(City, place_id)
     if place_id is None or response is None:
         abort(404)
     try:
@@ -73,7 +83,8 @@ def update_place(place_id=None):
     if new is None or type(new) is not dict:
         abort(400, 'Not a JSON')
     for key in new.keys():
-        if key != 'id' and key != 'created_at' and key != 'updated_at':
+        if key != 'id' and key != 'created_at' and key != 'city_id' and\
+           key != 'user_id' and key != 'updated_at':
             setattr(response, key, new[key])
     response.save()
     return make_response(jsonify(response.to_dict()), 200)
