@@ -24,6 +24,6 @@ def all_states():
 def state_by_id(state_id):
     """ address to display state by id """
     response = storage.get(State, state_id)
-    if res is None:
+    if response is None:
         abort(404)
     return jsonify(response.to_dict())
