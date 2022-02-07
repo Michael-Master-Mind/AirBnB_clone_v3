@@ -6,14 +6,14 @@ module to generate json response
 from api.v1.views import app_views
 from flask import jsonify, make_response, request, abort
 from models import storage
-from models.place import Places
+from models.place import Place
 
 
 @app_views.route('/places', strict_slashes=False)
 def all_places():
     """ display all places """
     response = []
-    places = storage.all(Places)
+    places = storage.all(Place)
     for place in places.values():
         response.append(place.to_dict())
     return jsonify(response)
@@ -22,7 +22,7 @@ def all_places():
 @app_views.route('/places/<place_id>', strict_slashes=False)
 def place_by_id(place_id):
     """ display place by id """
-    response = storage.get(Places, place_id)
+    response = storage.get(Place, place_id)
     if response is None:
         abort(404)
     return jsonify(response.to_dict())
@@ -35,7 +35,7 @@ def del_place(place_id=None):
     if place_id is None:
         abort(404)
     else:
-        trash = storage.get(Places, place_id)
+        trash = storage.get(Place, place_id)
         if trash is not None:
             storage.delete(trash)
             storage.save()
@@ -55,7 +55,7 @@ def create_place():
         abort(400, 'Not a JSON')
     if 'name' not in new.keys():
         abort(400, 'Missing Name')
-    response = Places(**new)
+    response = Place(**new)
     response.save()
     return make_response(jsonify(response.to_dict()), 201)
 
@@ -63,7 +63,7 @@ def create_place():
 @app_views.route('/places/<place_id>', methods=['PUT'], strict_slashes=False)
 def update_place(place_id=None):
     """ update an existing place """
-    response = storage.get(Places, place_id)
+    response = storage.get(Place, place_id)
     if place_id is None or response is None:
         abort(404)
     try:
