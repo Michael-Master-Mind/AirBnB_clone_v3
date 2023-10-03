@@ -160,7 +160,7 @@ Jennifer Huang - [Github](https://github.com/jhuang10123) / [Twitter](https://tw
 Second part of Airbnb: Joann Vuong
 
 ### Version 3:
- * Wuhibeselassie Tamire - [Github](https://github.com/wuhibe) / [GMail](wuhibetamire710@gmail.com)
- * William Agyemang-Yeboah - [Github](https://github.com/William-886) / [Gmail](kingliamm93@gmail.com)
+ * Michael Demissew - [Github](https://github.com/Michael-Master-Mind) / [Yahoo](michaeldemissew@yahoo.com)
+ 
 ## License
 Public Domain. No copy write protection.
